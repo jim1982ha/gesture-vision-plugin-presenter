@@ -1,0 +1,17 @@
+{
+  "id": "presenter",
+  "nameKey": "pluginPresenterName",
+  "descriptionKey": "pluginPresenterDescription",
+  "version": "1.0.0",
+  "author": "GestureVision Team",
+  "icon": {
+    "type": "material-icons",
+    "name": "slideshow"
+  },
+  "capabilities": {
+    "hasGlobalSettings": false,
+    "providesActions": true
+  },
+  "backendEntry": "backend.plugin.js",
+  "frontendEntry": "frontend/index.js"
+}

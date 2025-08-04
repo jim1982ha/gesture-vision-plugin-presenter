@@ -1,0 +1,13 @@
+{
+  "pluginPresenterName": "Presenter",
+  "pluginPresenterDescription": "Controls presentation software (e.g., PowerPoint, Google Slides) using keyboard shortcuts.",
+  "presenterActionLabel": "Action",
+  "presenterActionNextSlide": "Next Slide",
+  "presenterActionPrevSlide": "Previous Slide",
+  "presenterActionStartPresentation": "Start Presentation",
+  "presenterActionEndPresentation": "End Presentation",
+  "presenterActionBlankScreen": "Blank/Unblank Screen",
+  "invalidPresenterActionSettings": "Invalid Presenter action settings.",
+  "localhost": "localhost",
+  "Host": "Host"
+}

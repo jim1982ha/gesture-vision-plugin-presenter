@@ -1,0 +1,13 @@
+{
+  "pluginPresenterName": "Présentateur",
+  "pluginPresenterDescription": "Contrôle les logiciels de présentation (ex: PowerPoint, Google Slides) via des raccourcis clavier.",
+  "presenterActionLabel": "Action",
+  "presenterActionNextSlide": "Diapositive Suivante",
+  "presenterActionPrevSlide": "Diapositive Précédente",
+  "presenterActionStartPresentation": "Démarrer Présentation",
+  "presenterActionEndPresentation": "Terminer Présentation",
+  "presenterActionBlankScreen": "Écran Noir/Afficher",
+  "invalidPresenterActionSettings": "Paramètres d'action Présentateur invalides.",
+  "localhost": "localhost",
+  "Host": "Hôte"
+}

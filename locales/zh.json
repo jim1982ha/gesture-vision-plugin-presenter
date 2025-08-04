@@ -1,0 +1,13 @@
+{
+  "pluginPresenterName": "演示器",
+  "pluginPresenterDescription": "使用键盘快捷键控制演示软件（如 PowerPoint, Google Slides）。",
+  "presenterActionLabel": "操作",
+  "presenterActionNextSlide": "下一张幻灯片",
+  "presenterActionPrevSlide": "上一张幻灯片",
+  "presenterActionStartPresentation": "开始演示",
+  "presenterActionEndPresentation": "结束演示",
+  "presenterActionBlankScreen": "黑屏/恢复屏幕",
+  "invalidPresenterActionSettings": "无效的演示器动作设置",
+  "localhost": "localhost",
+  "Host": "主机"
+}
