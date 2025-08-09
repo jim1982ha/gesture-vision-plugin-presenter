@@ -1,23 +1,50 @@
-/* FILE: extensions/plugins/webhook/frontend/index.js */
-const webhookPluginFrontendModule = {
+/* FILE: extensions/plugins/presenter/frontend/index.js */
+const presenterPluginFrontendModule = {
     manifest: { /* will be populated by loader */ },
+    
     actionSettingsFields: (context) => {
         const { translate } = context.services;
+        const presentationActionOptions = [
+            'next_slide', 'prev_slide', 'start_presentation', 'end_presentation', 'blank_screen'
+        ].map(action => ({
+            value: action,
+            label: translate(`presenterAction${action.charAt(0).toUpperCase() + action.slice(1)}`, { defaultValue: action.replace(/_/g, ' ') })
+        }));
+
         return [
-            { id: 'webhookUrl', type: 'url', labelKey: 'webhookUrlLabel', placeholderKey: 'webhookUrlPlaceholder', required: true },
             {
-                id: 'webhookMethod', type: 'select', labelKey: 'webhookMethodLabel',
-                optionsSource: async () => ['POST', 'GET', 'PUT', 'DELETE'].map(m => ({ value: m, label: m })),
+                id: 'presentationAction',
+                type: 'select',
+                labelKey: 'presenterActionLabel',
+                optionsSource: async () => presentationActionOptions,
             },
-            { id: 'webhookHeaders', type: 'textarea', labelKey: 'webhookHeadersLabel', placeholderKey: 'webhookHeadersPlaceholder', helpTextKey: 'webhookHeadersHelp', rows: 2 },
-            { id: 'webhookBodyTemplate', type: 'textarea', labelKey: 'webhookBodyTemplateLabel', placeholderKey: 'webhookBodyTemplateInput', helpTextKey: 'webhookBodyTemplateHelp', rows: 3 }
+            { 
+                id: 'companionHost', 
+                type: 'text', 
+                labelKey: 'osCompanionHostLabel', 
+                placeholderKey: 'localhost', 
+                helpTextKey: 'osCompanionHostHelp' 
+            }
         ];
     },
+
     getActionDisplayDetails: (settings, context) => {
         const { translate } = context.services;
-        if (!settings?.webhookUrl) return [{ icon: 'error_outline', value: translate("invalidWebhookActionSettings") }];
-        const method = settings.webhookMethod || "POST";
-        return [{ icon: 'webhook', value: settings.webhookUrl }, { icon: 'http', value: `${translate("Method")}: ${method}` }];
+        if (!settings?.presentationAction) {
+            return [{ icon: 'error_outline', value: translate("invalidPresenterActionSettings") }];
+        }
+
+        const actionKey = `presenterAction${settings.presentationAction.charAt(0).toUpperCase() + settings.presentationAction.slice(1)}`;
+        const actionDisplay = translate(actionKey, { defaultValue: settings.presentationAction.replace(/_/g, ' ') });
+        
+        const details = [{ icon: 'slideshow', value: actionDisplay }];
+
+        if (settings.companionHost) {
+            details.push({ icon: 'dns', value: `${translate("Host")}: ${settings.companionHost}` });
+        }
+        
+        return details;
     },
 };
-export default webhookPluginFrontendModule;
+
+export default presenterPluginFrontendModule;
