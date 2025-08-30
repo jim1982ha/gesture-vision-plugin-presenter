@@ -4,7 +4,7 @@ import WebSocket from 'ws';
 import { createErrorResult, createSuccessResult } from '#backend/utils/action-helpers.js';
 import { type PresenterActionSettings } from './schemas.js';
 
-import type { ActionDetails, ActionResult } from '#shared/types/index.js';
+import type { ActionDetails, ActionResult } from '#shared/index.js';
 import type { ActionHandler, BackendPluginContext } from '#backend/types/index.js';
 
 const ACTION_TO_OS_COMMAND_MAP: Record<
