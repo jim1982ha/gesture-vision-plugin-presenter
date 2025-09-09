@@ -1,4 +1,10 @@
 /* FILE: extensions/plugins/presenter/frontend/index.js */
+
+// Ensure the global registry exists
+if (!window.GestureVisionPlugins) {
+  window.GestureVisionPlugins = {};
+}
+
 const presenterPluginFrontendModule = {
     manifest: { /* will be populated by loader */ },
     
@@ -46,5 +52,8 @@ const presenterPluginFrontendModule = {
         return details;
     },
 };
+
+// Register the module with the global registry
+window.GestureVisionPlugins['gesture-vision-plugin-presenter'] = presenterPluginFrontendModule;
 
 export default presenterPluginFrontendModule;
