@@ -9,7 +9,7 @@ const presenterPluginFrontendModule = {
     manifest: { /* will be populated by loader */ },
     
     actionSettingsFields: (context) => {
-        const { translate } = context.services;
+        const { translate } = context.services.translationService;
         const presentationActionOptions = [
             'next_slide', 'prev_slide', 'start_presentation', 'end_presentation', 'blank_screen'
         ].map(action => ({
@@ -35,7 +35,7 @@ const presenterPluginFrontendModule = {
     },
 
     getActionDisplayDetails: (settings, context) => {
-        const { translate } = context.services;
+        const { translate } = context.services.translationService;
         if (!settings?.presentationAction) {
             return [{ icon: 'error_outline', value: translate("invalidPresenterActionSettings") }];
         }
