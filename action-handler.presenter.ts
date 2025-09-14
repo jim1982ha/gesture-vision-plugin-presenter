@@ -1,7 +1,8 @@
 /* FILE: extensions/plugins/presenter/action-handler.presenter.ts */
 import WebSocket from 'ws';
+import type { Response } from 'node-fetch';
 
-import { createErrorResult, createSuccessResult } from '#backend/utils/action-helpers.js';
+import { createErrorResult, executeWithRetry } from '#backend/utils/action-helpers.js';
 import { type PresenterActionSettings } from './schemas.js';
 
 import type { ActionDetails, ActionResult } from '#shared/index.js';
@@ -42,48 +43,43 @@ export class PresenterActionHandler implements ActionHandler {
     }
 
     const targetHost = instanceSettings.companionHost?.trim() || 'localhost';
-    let socket: WebSocket | null = null;
-    try {
-      socket = (await context.connectToCompanion(targetHost)) as WebSocket | null;
-      if (!socket) {
-        throw new Error('Failed to establish a valid WebSocket connection.');
-      }
-
-      const commandPayload = {
-        command: mappedCommand.command,
-        target: mappedCommand.target,
-      };
-
-      await new Promise<void>((resolve, reject) => {
-        const sendTimeout = setTimeout(
-          () =>
-            reject(
-              new Error(`Timeout sending command to Companion at ${targetHost}.`)
-            ),
-          2000
-        );
-        socket?.send(JSON.stringify(commandPayload), (err) => {
-          clearTimeout(sendTimeout);
-          if (err) reject(err);
-          else resolve();
+    
+    const actionFn = async () => {
+      let socket: WebSocket | null = null;
+      try {
+        socket = (await context.connectToCompanion(targetHost)) as WebSocket | null;
+        if (!socket) { throw new Error('Failed to establish a valid WebSocket connection.'); }
+        const commandPayload = { command: mappedCommand.command, target: mappedCommand.target };
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('Send timeout')), 2000);
+          socket?.send(JSON.stringify(commandPayload), (err) => {
+            clearTimeout(timeout);
+            if (err) reject(err);
+            else resolve();
+          });
         });
-      });
+        const mockResponse = { ok: true, status: 200 } as Response;
+        return { response: mockResponse, responseBody: instanceSettings };
+      } finally {
+        if (socket?.readyState === WebSocket.OPEN) socket.close(1000, 'Command sent');
+        else if (socket) socket.terminate();
+      }
+    };
 
-      return createSuccessResult(
-        `Presenter action '${instanceSettings.presentationAction}' sent to ${targetHost}.`,
-        instanceSettings
-      );
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      return createErrorResult(`Presenter action failed: ${message}`, {
-        error,
-        host: targetHost,
-        settingsUsed: instanceSettings,
-      });
-    } finally {
-      if (socket && socket.readyState === WebSocket.OPEN)
-        socket.close(1000, 'Command sent');
-      else if (socket) socket.terminate();
-    }
+    const isRetryable = (error: unknown): boolean => {
+      if (error instanceof Error) {
+        const msg = error.message.toLowerCase();
+        return msg.includes('timeout') || msg.includes('refused') || msg.includes('not found');
+      }
+      return false;
+    };
+
+    return executeWithRetry<PresenterActionSettings>({
+      actionFn,
+      isRetryableError: isRetryable,
+      maxRetries: 2,
+      initialDelayMs: 1000,
+      actionName: `Presenter action '${instanceSettings.presentationAction}' to ${targetHost}`,
+    });
   }
 }
